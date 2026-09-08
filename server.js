@@ -51,9 +51,34 @@ app.get("/", (req, res) => {
 app.post("/webhook", (req, res) => {
     console.log("📩 Webhook recibido");
 
-    console.log(JSON.stringify(req.body, null, 2));
+    try {
+        const message =
+            req.body.entry?.[0]?.changes?.[0]?.value?.messages?.[0];
 
-    res.sendStatus(200);
+        if (!message) {
+            console.log("ℹ️ No se encontró ningún mensaje");
+            return res.sendStatus(200);
+        }
+
+        console.log("📱 Tipo:", message.type);
+
+        if (message.type === "text") {
+            console.log("💬 Mensaje:", message.text.body);
+        }
+
+        if (message.type === "interactive") {
+            const button = message.interactive?.button_reply;
+
+            console.log("🔘 Botón:", button?.title);
+            console.log("🆔 ID:", button?.id);
+        }
+
+        res.sendStatus(200);
+
+    } catch (error) {
+        console.error("❌ Error:", error);
+        res.sendStatus(500);
+    }
 });
 
 const PORT = process.env.PORT || 3000;
