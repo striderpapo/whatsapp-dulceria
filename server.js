@@ -45,7 +45,17 @@ const app = express();
 app.use(express.json());
 
 app.get("/webhook", (req, res) => {
-    res.send("🍬 Bot de WhatsApp funcionando");
+    const mode = req.query["hub.mode"];
+    const token = req.query["hub.verify_token"];
+    const challenge = req.query["hub.challenge"];
+
+    if (mode === "subscribe" && token === process.env.VERIFY_TOKEN) {
+        console.log("✅ Webhook verificado");
+        res.status(200).send(challenge);
+    } else {
+        console.log("❌ Verificación fallida");
+        res.sendStatus(403);
+    }
 });
 
 app.post("/webhook", (req, res) => {
