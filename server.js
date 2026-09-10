@@ -44,7 +44,7 @@ const app = express();
 
 app.use(express.json());
 
-app.get("/", (req, res) => {
+app.get("/webhook", (req, res) => {
     res.send("🍬 Bot de WhatsApp funcionando");
 });
 
